@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 
 
@@ -9,23 +10,45 @@ def get_html_content(url):
 
 
 def get_style_data(url):
-    response = requests.get(url)
-    html_content = response.content
-
+    html_content = get_html_content(url)
     soup = BeautifulSoup(html_content, "html.parser")
 
     style_name = soup.find("h1", class_="entry-title")
-    style_description = soup.find(
-        "div", class_="entry-content"
-    )
+    if not style_name:
+        return None
 
+    return extract_style_data(soup)
+
+
+def extract_vital_stats(stats_dict):
+    extracted_stats = {}
+
+    for key, value in stats_dict.items():
+        stat_range = value.split(" - ")
+        min_value = "0"
+        max_value = "0"
+        
+        if len(stat_range) >= 2:
+            min_values = re.findall(r"[\d.]+", stat_range[0])
+            max_values = re.findall(r"[\d.]+", stat_range[1])
+            min_value = min_values[0] if min_values else "0"
+            max_value = max_values[0] if max_values else "0"
+
+        extracted_stats[f"{key}_min"] = float(min_value.rstrip("%"))
+        extracted_stats[f"{key}_max"] = float(max_value.rstrip("%"))
+
+    return extracted_stats
+
+
+def extract_style_data(soup):
+    name_text = soup.find("h1", class_="entry-title").text.strip()
+    designation, name = name_text.split(". ")
+
+    style_description = soup.find("div", class_="entry-content")
     commercial_examples = soup.find("div", class_="commercial-examples")
     style_attributes = soup.find("div", class_="style-attributes")
-
     vital_statistics_table = soup.find("div", class_="vital-statistics")
-    if not all([style_name, style_description, commercial_examples, style_attributes, vital_statistics_table]):
-        return None
-    
+
     commercial_examples = commercial_examples.text.strip()
     style_attributes = [
         tag.text for tag in style_attributes.find_all("a")
@@ -35,35 +58,6 @@ def get_style_data(url):
     vital_statistics = {
         row.find("h3").text.strip().lower(): row.find("p").text.strip() for row in rows
     }
-
-    return {
-        "name": style_name.text.strip(),
-        "description": style_description.text.strip(),
-        "commercial_examples": commercial_examples,
-        "style_attributes": style_attributes,
-        "vital_statistics": vital_statistics,
-    }
-
-
-
-
-def extract_vital_stats(stats_dict):
-    extracted_stats = {}
-
-    for key, value in stats_dict.items():
-        stat_range = value.split(" - ")
-        extracted_stats[f"{key}_min"] = float(stat_range[0].rstrip('%'))
-        extracted_stats[f"{key}_max"] = float(stat_range[1].rstrip('%'))
-
-    return extracted_stats
-
-
-
-def extract_style_data(url):
-    data = get_style_data(url)
-
-    name_text = data["name"].text.strip()
-    designation, name = name_text.split(". ")
 
     style = {}
     for characteristic in [
@@ -77,17 +71,21 @@ def extract_style_data(url):
         "ingredients",
         "style-comparison",
     ]:
-        div = data["description"].find("div", class_=characteristic)
-        para = div.find("p")
-        style[characteristic] = para.text.strip()
+        div = style_description.find("div", class_=characteristic)
+        if div:
+            para = div.find("p")
+            style[characteristic] = para.text.strip()
+        else:
+            style[characteristic] = "N/A"
 
-    vital_stats = extract_vital_stats(data["vital_statistics"])
-    
+    vital_stats = extract_vital_stats(vital_statistics)
+
     return {
         "style_designation": designation,
         "style_name": name,
         **style,
         **vital_stats,
-        "commercial_examples": data["commercial_examples"],
-        "style_attributes": data["style_attributes"],
+        "commercial_examples": commercial_examples,
+        "style_attributes": style_attributes,
     }
+
