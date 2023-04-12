@@ -1,7 +1,37 @@
-# BJCP-Guidelines-Parser
+# 🍺 BJCP Guidelines Parser 🍺
 
-BJCP-Guidelines-Parser is a Python-based HTML scraper that extracts data on beer styles from the [BJCP guidelines website](https://www.bjcp.org) and transforms it into a structured JSON format. This tool is designed to help developers and beer enthusiasts quickly access detailed information on different beer styles, including ingredients, characteristics, and brewing techniques.
+A simple Python script to scrape and parse the [Beer Judge Certification Program (BJCP)](https://www.bjcp.org/style/2021/) style guideline.
 
-The [BJCP](https://www.bjcp.org) provides an invaluable resource for beer education and appreciation, and I am grateful for their dedication to promoting high-quality brewing practices and knowledge sharing throughout the beer community.
+## Features
 
-**Note: This is a work-in-progress project and is subject to change.**
+- 🌐 Scrapes beer style data from the BJCP website
+- 🧹 Cleans and organizes data into a structured format
+- 💾 Saves output to a JSON file for easy access
+- ⏳ Resumes scraping from the last saved point if interrupted
+- 📊 Displays progress with a CLI progress bar
+
+## Installation
+
+1. Clone this repository:
+
+    ```
+    git clone https://github.com/yourusername/BJCP-Guidelines-Parser.git
+    ```
+
+2. Install the required Python packages:
+
+    ```
+    pip install -r requirements.txt
+    ```
+
+## Usage
+
+1. Run the script:
+
+    ```
+    python main.py
+    ```
+
+2. The script will begin scraping the BJCP style guidelines and display progress in the terminal.
+
+3. Upon completion, the parsed data will be saved to `data/output.json`.
