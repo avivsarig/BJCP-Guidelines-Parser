@@ -72,7 +72,7 @@ def extract_style_data(soup):
         div = style_description.find("div", class_=characteristic)
         if div:
             para = div.find("p")
-            style[characteristic] = para.text.strip()
+            style[characteristic] = para.text.strip().replace("\n", " ")
         else:
             style[characteristic] = "N/A"
 
