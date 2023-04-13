@@ -29,7 +29,7 @@ A simple Python script to scrape and parse the [Beer Judge Certification Program
 1. Run the script:
 
     ```
-    python main.py
+    python src/main.py
     ```
 
 2. The script will begin scraping the BJCP style guidelines and display progress in the terminal.
