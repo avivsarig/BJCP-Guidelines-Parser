@@ -27,7 +27,7 @@ def extract_vital_stats(stats_dict):
         stat_range = value.split(" - ")
         min_value = "0"
         max_value = "0"
-        
+
         if len(stat_range) >= 2:
             min_values = re.findall(r"[\d.]+", stat_range[0])
             max_values = re.findall(r"[\d.]+", stat_range[1])
@@ -50,9 +50,7 @@ def extract_style_data(soup):
     vital_statistics_table = soup.find("div", class_="vital-statistics")
 
     commercial_examples = commercial_examples.text.strip()
-    style_attributes = [
-        tag.text for tag in style_attributes.find_all("a")
-    ]
+    style_attributes = [tag.text for tag in style_attributes.find_all("a")]
 
     rows = vital_statistics_table.find_all("div", class_="row")
     vital_statistics = {
@@ -88,4 +86,3 @@ def extract_style_data(soup):
         "commercial_examples": commercial_examples,
         "style_attributes": style_attributes,
     }
-

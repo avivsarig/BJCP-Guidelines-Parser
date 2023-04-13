@@ -1,11 +1,12 @@
 from scrape import get_style_data
-from utils import pretty_print, save_to_json
+from utils import save_to_json
 
 import string
 import json
-
 from urllib.parse import quote
+
 from tqdm import tqdm
+
 
 def scrape_bjcp_website(output_file=None):
     base_url = "https://www.bjcp.org/style/2021"
@@ -28,8 +29,6 @@ def scrape_bjcp_website(output_file=None):
                 break
 
     return styles_data
-
-
 
 
 output_file = "data/output.json"
