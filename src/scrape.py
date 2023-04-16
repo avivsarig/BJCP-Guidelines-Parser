@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 def get_html_content(url):
     response = requests.get(url)
     html_content = response.content
+    if response.status_code != 200:
+        print(f"Something went wrong at page {url}")
     return html_content
 
 
@@ -45,11 +47,15 @@ def extract_style_data(soup):
     designation, name = name_text.split(". ")
 
     style_description = soup.find("div", class_="entry-content")
+
     commercial_examples = soup.find("div", class_="commercial-examples")
-    style_attributes = soup.find("div", class_="style-attributes")
+    commercial_examples = commercial_examples.text.strip()[
+        len("Commercial Examples ") :
+    ]
+
     vital_statistics_table = soup.find("div", class_="vital-statistics")
 
-    commercial_examples = commercial_examples.text.strip()
+    style_attributes = soup.find("div", class_="style-attributes")
     style_attributes = [tag.text for tag in style_attributes.find_all("a")]
 
     rows = vital_statistics_table.find_all("div", class_="row")
